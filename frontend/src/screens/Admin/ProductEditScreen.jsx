@@ -34,7 +34,7 @@ const ProductEditScreen = () => {
 
     const [name, setName] = useState('');
     const [price, setPrice] = useState(0);
-    const [image, setImage] = useState('');
+    const [image, setImage] = useState([]);
     const [brand, setBrand] = useState('');
     const [category, setCategory] = useState('');
     const [countInStock, setCountInStock] = useState(0);
@@ -91,17 +91,26 @@ const ProductEditScreen = () => {
         }
       }, [product]);
 
-    const uploadFileHandler = async (e) => {
+      const uploadFileHandler = async (e) => {
         const formData = new FormData();
-        formData.append('image', e.target.files[0]);
-        try {
-          const res = await uploadProductImage(formData).unwrap();
-          toast.success(res.message);
-          setImage(res.image);
-        } catch (err) {
-          toast.error(err?.data?.message || err.error);
+        const files = e.target.files;
+    
+        // Append each file to the FormData object
+        for (let i = 0; i < files.length; i++) {
+            formData.append('images', files[i]);
         }
-      };
+    
+        try {
+            const res = await uploadProductImage(formData).unwrap();
+            toast.success(res.message);
+            console.log(res.images)
+            setImage(res.images)
+            // Update image state or do something else with the response
+        } catch (err) {
+            toast.error(err?.data?.message || err.error);
+        }
+    };
+    
     return (
         <div>
             {loadingUpdate && <Loader />}
@@ -125,9 +134,11 @@ const ProductEditScreen = () => {
                     <label className='block mb-2 text-sm font-medium text-gray-900' htmlFor="productImages">Product Images</label>
                     <input
                         type="file"
+                        name='images'
                         className='block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none '
                         id="productImages"
                         onChange={uploadFileHandler}
+                        multiple
                     />
                     {loadingUpload && <Loader />}
                 </div>

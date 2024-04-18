@@ -35,13 +35,7 @@ const Footer = () => {
                                 <Link to='/pages/frequently-asked-que     .xxx  stions'><a className="transition-colors duration-300 hover:cursor-pointer hover:text-primary_dark">help & faqs</a></Link>
                                 <p className="transition-colors duration-300 hover:cursor-pointer hover:text-primary_dark">terms and conditions</p>
                                 <p className="transition-colors duration-300 hover:cursor-pointer hover:text-primary_dark">delivery and returns</p>
-                            </div>s,vcvc.vNODE_ENV=production
-PORT=8000
-MONGO_URI=mongodb+srv://ecommerce_app:ecommerce_app@cluster0.2lmf1nm.mongodb.net/ecommerce_app
-JWT_SECRET=abc123
-PAYPAL_CLIENT_ID=AeU1J_lZoJGBl2yiEt1hXp3bXVHt24b1vvt95lRCsRr3wtB2mujtcdk5d98zVSrtxZYxsvQcCrswiruK
-OAUTH_CLIENT_ID=1025156040682-9rt302r4rcrp05g6ju4ncdh70at3uad6.apps.googleusercontent.com
-OAUTH_CLIENT_SECRET=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
+                            </div>
                         </div>
                     </div>
                     
