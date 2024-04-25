@@ -1,6 +1,7 @@
 import asyncHandler from "../middleware/asyncHandler.js";
 import User from "../models/userModel.js";
 import generateToken from "../utils/generateToken.js";
+import sendMail from "../utils/sendMail.js";
 
 // @desc auth user and get the token
 // @route GET /api/users/login
@@ -33,8 +34,17 @@ const authUser = asyncHandler(async (req, res) => {
 // @access Public
 
 const registerUser = asyncHandler(async (req, res) => {
+
     const { name, email, password } = req.body;
 
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    // Minimum 8 characters, at least one uppercase letter, one lowercase letter, one number, and one special character
+
+    if (!passwordRegex.test(password)) {
+        res.status(400);
+        throw new Error('Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character.');
+    }
+    
     const userExists = await User.findOne({ email });
 
     if(userExists){
@@ -59,6 +69,8 @@ const registerUser = asyncHandler(async (req, res) => {
             email: user.email,
             isAdmin: user.isAdmin,
         });
+
+        sendMail(email); // send mail
         
     } else{
         res.status(400)

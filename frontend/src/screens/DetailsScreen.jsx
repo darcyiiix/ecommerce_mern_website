@@ -7,13 +7,15 @@ import { useDispatch } from 'react-redux';
 import { useCreateOrderMutation } from '../slices/ordersApiSlice';
 import { clearCartItems } from '../slices/cartSlice';
 import { toast } from 'react-toastify';
+import { useParams } from 'react-router-dom';
+import axios from 'axios';
 
 const DetailsScreen = () => {
+
+
     const cart = useSelector((state) => state.cart);
     const [createOrder, {isLoading, error}] = useCreateOrderMutation();
-
     const { cartItems } = cart
-
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
@@ -23,24 +25,33 @@ const DetailsScreen = () => {
         }
     }, [cart.shippingAddress.address, cart.paymentMethod, navigate]);
 
-    console.log(cart)
     const placeOrderHandler = async () => {
-        try {
-            const res = await createOrder({
-                orderItems: cart.cartItems,
-                shippingAddress: cart.shippingAddress,
-                paymentMethod: cart.paymentMethod,
-                itemsPrice: cart.itemsPrice,
-                taxPrice: cart.shippingTax,
-                shippingPrice: cart.shippingPrice,
-                totalPrice: cart.totalPrice,
-            }).unwrap();
-            dispatch(clearCartItems());
-            navigate(`/order/${res._id}`);
-        } catch (error) {
-            toast.error(error);
+      try {
+        const res = await createOrder({
+          orderItems: cart.cartItems,
+          shippingAddress: cart.shippingAddress,
+          paymentMethod: cart.paymentMethod,
+          itemsPrice: cart.itemsPrice,
+          taxPrice: cart.shippingTax,
+          shippingPrice: cart.shippingPrice,
+          totalPrice: cart.totalPrice,
+        }).unwrap();
+        
+        for(const item of cartItems){
+          const response = await axios.put(`/api/products/${item._id}/decrement`, {
+            qty: item.qty // Assuming you decrement by 1 when adding to cart
+            });
+            console.log(response.data); // Log the response if needed
         }
-    }
+        dispatch(clearCartItems());
+        
+        navigate(`/order/${res._id}`);
+      } catch (error) {
+        toast.error(error);
+        console.error('Error decrementing product quantity:', error);
+      }
+    };
+    
     return (
     
       <div className='p-8'>

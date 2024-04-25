@@ -8,8 +8,6 @@ import Product from "../models/productModel.js";
 const getProducts = asyncHandler(async (req, res) => {
     
     const keyword = req.query.keyword ? {name: {$regex: req.query.keyword, $options: 'i'} } : {};
-    const count = await Product.countDocuments({...keyword});
-
     const products = await Product.find({...keyword});
     res.json({products});
 });
@@ -19,6 +17,43 @@ const getAllProducts = asyncHandler(async (req, res) => {
     const products = await Product.find({});
     res.json(products);
 });
+
+// @desc Decrement product quantity 
+// @route PUT /api/products/:productId/decrement
+// @access Public
+
+
+const decrementProduct = async (req, res) => {
+    const productId = req.params.productId;
+    const { qty } = req.body;
+  
+    try {
+      // Find the product by its ID
+      const product = await Product.findById(productId);
+  
+      if (!product) {
+        return res.status(404).json({ message: 'Product not found' });
+      }
+  
+      // Decrement the product quantity
+      product.countInStock -= qty;
+  
+      // Save the updated product
+      await product.save();
+  
+      res.json({ message: 'Product quantity decremented successfully', product });
+    } catch (error) {
+      console.error('Error decrementing product quantity:', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+
+}
+
+const checkFunc = async (req, res) => {
+    res.send(console.log('hello'));
+}
+
+
 
 // @desc Fetch a product
 // @route GET /api/products/:id
@@ -151,4 +186,4 @@ const getTopProducts = asyncHandler(async (req, res) => {
 });
 
 
-export { getProducts, getAllProducts, getProductByID, createProduct, updateProduct, deleteProduct, createProductReview, getTopProducts };
+export { getProducts, getAllProducts, decrementProduct, checkFunc, getProductByID, createProduct, updateProduct, deleteProduct, createProductReview, getTopProducts };

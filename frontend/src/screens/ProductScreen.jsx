@@ -7,6 +7,7 @@ import { useCreateReviewMutation, useGetProductDetailsQuery } from '../slices/pr
 import { addToCart } from '../slices/cartSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
+import axios from 'axios';
 // import { Form, Row, Col, Image, ListGroup, Card, Button } from 'react-bootstrap'
 
 const ProductDetail = () => {
@@ -59,10 +60,24 @@ const ProductDetail = () => {
         }
     };
 
-    const addToCartHandler = () => {
+    const addToCartHandler = async () => {
         dispatch(addToCart({...product, qty}));
         toast.success('Item added to cart');
-    }
+
+            // Make a request to decrement product quantity in the database
+        // try {
+        //     const response = await axios.put(`/api/products/${product._id}/decrement`, {
+        //     qty: qty // Assuming you decrement by 1 when adding to cart
+        //     });
+        //     console.log(response.data); // Log the response if needed
+        // } catch (error) {
+        //     console.error('Error decrementing product quantity:', error);
+        //     // Handle errors
+        // }
+    };
+    
+
+    
 
     // const [allowReview, setAllowReview] = useState(true);
 

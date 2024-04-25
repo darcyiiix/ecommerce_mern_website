@@ -20,10 +20,6 @@ const userSchema = new mongoose.Schema({
         required: true,
         default: false,
     },
-    allowedCoordinates: {
-        lat: Number,
-        lon: Number,
-    }
 }, {
     timestamps: true,
 });
