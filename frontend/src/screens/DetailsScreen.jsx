@@ -18,7 +18,7 @@ const DetailsScreen = () => {
     const { cartItems } = cart
     const navigate = useNavigate();
     const dispatch = useDispatch();
-
+    console.log(cartItems)
     useEffect(() => {
         if(!cart.shippingAddress.address || !cart.paymentMethod){
             navigate('/checkout');
@@ -28,7 +28,10 @@ const DetailsScreen = () => {
     const placeOrderHandler = async () => {
       try {
         const res = await createOrder({
-          orderItems: cart.cartItems,
+          orderItems: cart.cartItems.map(item => ({
+            ...item,
+            selectedDimension: item.selectedDimension, // Mapping selectedDimension to dimensions
+          })),
           shippingAddress: cart.shippingAddress,
           paymentMethod: cart.paymentMethod,
           itemsPrice: cart.itemsPrice,
@@ -41,7 +44,7 @@ const DetailsScreen = () => {
           const response = await axios.put(`/api/products/${item._id}/decrement`, {
             qty: item.qty // Assuming you decrement by 1 when adding to cart
             });
-            console.log(response.data); // Log the response if needed
+            console.log(response.data); // Log the response
         }
         dispatch(clearCartItems());
         
@@ -86,6 +89,7 @@ const DetailsScreen = () => {
                     <div className="flex w-full flex-col px-4 py-4">
                       <span  className='font-semibold'><Link to={`/products/${item.product}`}>{item.name}</Link></span>
                       <p className="text-lg">{item.qty} x {item.price} = {(item.qty * item.price).toFixed(2)}</p>
+                      { item.selectedDimension && <p className='text-lg'>{item.selectedDimension.diameter}cm x {item.selectedDimension.height}h</p>}
                     </div>
                   </div>
                   ))}

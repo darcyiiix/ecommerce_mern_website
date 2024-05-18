@@ -1,14 +1,13 @@
-import React, { useState, useEffect, useSyncExternalStore } from 'react';
+import React, { useState, useEffect } from 'react';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
 import Rating from '../components/Ratings';
-import { useNavigate, useParams, Link } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useCreateReviewMutation, useGetProductDetailsQuery } from '../slices/productsApiSlice';
 import { addToCart } from '../slices/cartSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import axios from 'axios';
-// import { Form, Row, Col, Image, ListGroup, Card, Button } from 'react-bootstrap'
+import Alert from '../components/Alert';
 
 const ProductDetail = () => {
 
@@ -16,23 +15,31 @@ const ProductDetail = () => {
 
     const { data: product, isLoading, refetch, error } = useGetProductDetailsQuery(productId);
     const [ createReview, { isLoading: loadingProductReview, error: reviewError }] = useCreateReviewMutation();
-
+    
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
     const [amount, setAmount] = useState(1);
-    const [price, setPrice] = useState(product ? product.price : 0);
+    const [price, setPrice] = useState(0);
     const [activeImg, setActiveImage] = useState('');
     const [border, setBorder] = useState(true);
     const [qty, setQty] = useState(1);
     const [rating, setRating] = useState(0)
     const [comment, setComment] = useState('');
+    const [showAlert, setShowAlert] = useState(false);
+    const [selectedColor, setSelectedColor] = useState('');
+    const [selectedDimension, setSelectedDimension] = useState('');
+
+
 
     const { userInfo } = useSelector((state) => state.auth)
 
     useEffect(() => {
-        if (product && product.image && product.image.length > 0) {
-            setActiveImage(product.image[0]); // Set the first image as active initially
+        if (product) {
+            setPrice(product.price);
+            if (product.image && product.image.length > 0) {
+                setActiveImage(product.image[0]);
+            }
         }
     }, [product]);
 
@@ -60,26 +67,13 @@ const ProductDetail = () => {
         }
     };
 
-    const addToCartHandler = async () => {
-        dispatch(addToCart({...product, qty}));
-        toast.success('Item added to cart');
+    const addToCartHandler = async (selectedDimension) => {
 
-            // Make a request to decrement product quantity in the database
-        // try {
-        //     const response = await axios.put(`/api/products/${product._id}/decrement`, {
-        //     qty: qty // Assuming you decrement by 1 when adding to cart
-        //     });
-        //     console.log(response.data); // Log the response if needed
-        // } catch (error) {
-        //     console.error('Error decrementing product quantity:', error);
-        //     // Handle errors
-        // }
+        console.log(selectedDimension)
+        dispatch(addToCart({...product, price, qty, selectedDimension}));
+        setShowAlert(true);
+        setTimeout(() => setShowAlert(false), 3000);
     };
-    
-
-    
-
-    // const [allowReview, setAllowReview] = useState(true);
 
     const submitHandler = async (e) => {
         e.preventDefault();
@@ -96,7 +90,6 @@ const ProductDetail = () => {
             setComment('');
         } catch (err) {
             toast.error(err?.data?.message || err.error);
-            // setAllowReview(false);
         }
     }
 
@@ -107,6 +100,11 @@ const ProductDetail = () => {
             : (
 
             <>
+
+            <div>
+                {console.log(product)}
+                {showAlert && <Alert mode="success" message={`${product.name} added to cart`} />}
+            </div>
 
             <div className='flex justify-between lg:flex-row gap-16 lg:items-start pt-24 pb-16 px-2 max-[864px]:px-4 w-[970px] max-lg:w-[760px] mx-auto max-[864px]:flex-col max-[864px]:w-auto'>
 
@@ -156,12 +154,26 @@ const ProductDetail = () => {
                     )}
 
 
-                    <form>
-                    {(product.dimension && product.dimension.length > 0 ) && <select onChange={(e) => setPrice(e.target.value)} id="dimension" className="bg-transparent border border-gray-300 text-gray-900 text-sm rounded-lg focus:outline-none cursor-pointer block w-9/12 py-3 px-1 shadow-lg mb-2">
-                        <option value="N/A">Select a dimension</option>
-                        {product.dimension?.map((dim, index) => <option key={index} value={dim.price}>{`${dim.diameter}cm x ${dim.height} h price: $${dim.price}`}</option>)}
-                    </select>}
-                    </form>
+<form>
+    {(product.dimension && product.dimension.length > 0 ) && 
+        <select 
+            onChange={(e) => {
+                const selectedDim = JSON.parse(e.target.value);
+                setPrice(selectedDim.price);
+                setSelectedDimension(selectedDim);
+            }} 
+            id="dimension" 
+            className="bg-transparent border border-gray-300 text-gray-900 text-sm rounded-lg focus:outline-none cursor-pointer block w-9/12 py-3 px-1 shadow-lg mb-2"
+        >
+            <option value="N/A">Select a dimension</option>
+            {product.dimension?.map((dim, index) => (
+                <option key={index} value={JSON.stringify(dim)}>
+                    {`${dim.diameter}cm x ${dim.height} h price: $${dim.price}`}
+                </option>
+            ))}
+        </select>
+    }
+</form>
 
                     <span className={`${product.countInStock > 0 ? 'text-primary' : 'text-red-400'} -mt-4`}>{ product.countInStock > 0 ? 'In stock' : 'Out of stock' }</span>
 
@@ -183,7 +195,7 @@ const ProductDetail = () => {
 
                     <div className='flex flex-row max-[385px]:flex-col items-center gap-12'>
                     
-                        <button className='bg-primary max-lg:px-8 hover:bg-primary_dark transition text-white py-3 px-16 h-full max-[385px]:w-full' disabled={product.countInStock === 0} onClick={addToCartHandler}>Add to Cart</button>
+                        <button className='bg-primary max-lg:px-8 hover:bg-primary_dark transition text-white py-3 px-16 h-full max-[385px]:w-full' disabled={product.countInStock === 0} onClick={() => addToCartHandler(selectedDimension)}>Add to Cart</button>
                     </div>
                 </div>
 

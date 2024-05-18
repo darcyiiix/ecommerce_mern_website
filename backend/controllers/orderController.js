@@ -26,6 +26,7 @@ const addOrderItems = asyncHandler(async (req, res) => {
                 ...x,
                 product: x._id,
                 _id: undefined,
+                selectedDimension: x.selectedDimension,
             })),
             user: req.user._id,
             shippingAddress,

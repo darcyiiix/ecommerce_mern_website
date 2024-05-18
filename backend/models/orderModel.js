@@ -16,6 +16,13 @@ const orderSchema = new mongoose.Schema({
             required: true,
             ref: "Product",
         },
+        selectedDimension: { // Added dimensions subdocument
+            diameter: { type: Number, required: false },
+            height: { type: Number, required: false },
+            price: { type: Number, required: false },
+            
+        },
+        
     }],
     shippingAddress: {
         address: { type: String, required: true },
@@ -53,6 +60,7 @@ const orderSchema = new mongoose.Schema({
         required: true,
         default: 0.0,
     },
+
     isPaid: {
         type: Boolean,
         required: true,

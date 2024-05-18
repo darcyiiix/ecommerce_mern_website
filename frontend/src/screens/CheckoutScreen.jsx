@@ -14,6 +14,7 @@ const Checkout = () => {
   const dispatch = useDispatch();
 
   const cart = useSelector((state) => state.cart);
+  console.log(cart)
   const { shippingAddress } = cart;
 
   const [address, setAddress] = useState(shippingAddress?.address || '');
@@ -57,6 +58,10 @@ const Checkout = () => {
           <div className="flex w-full flex-col px-4 py-4">
             <span className="font-semibold"><Link to={`/products/${item.product}`}>{item.name}</Link></span>
             <p className="text-lg font-bold">{item.qty} x {item.price} = {(item.qty * item.price).toFixed(2)}</p>
+
+            {item.selectedDimension && <p className="text-lg font-bold">{item.selectedDimension.diameter}cm x {item.selectedDimension.height}h</p> }
+            
+            
           </div>
         </div>
         ))}

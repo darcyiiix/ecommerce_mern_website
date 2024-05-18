@@ -13,6 +13,7 @@ export const updateCart = (state) => {
             state.shippingPrice = addDecimals(state.itemsPrice > 100 ? 0 : 10)
 
             // Calculate taxes
+            state.myDimension = state.cartItems.selectedDimension;
 
             state.shippingTax = addDecimals(Number(state.itemsPrice *  0.15).toFixed(2));
 

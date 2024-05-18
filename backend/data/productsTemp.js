@@ -38,9 +38,10 @@ const products = [
                 diameter: 35,
                 height: 40,
                 price: 50,
-            }, 
-    
-     ]
+            },
+     ],
+
+     colors: ['black', 'white', 'red'] 
     },
 
     {

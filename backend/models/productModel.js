@@ -77,6 +77,10 @@ const productSchema = new mongoose.Schema({
     },
     dimension: [dimensionSchema],
     reviews: [reviewSchema], // Adding the reviews field
+    colors: [{
+        type: String,
+        required: true,
+    }],
 }, {
     timestamps: true
 });
