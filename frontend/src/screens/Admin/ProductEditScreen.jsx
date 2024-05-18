@@ -39,7 +39,12 @@ const ProductEditScreen = () => {
     const [category, setCategory] = useState('');
     const [countInStock, setCountInStock] = useState(0);
     const [description, setDescription] = useState('');
-  
+    const [dimension, setDimension] = useState([]);
+    const [diameter, setDiameter] = useState('');
+    const [height, setHeight] = useState('');
+    const [dimPrice, setDimPrice] = useState('');
+
+    console.log(dimension)
     const {
       data: product,
       isLoading,
@@ -55,6 +60,27 @@ const ProductEditScreen = () => {
   
     const navigate = useNavigate();
 
+    const handleAddDimension = () => {
+        if (diameter.trim() !== '' && height.trim() !== '' && dimPrice.trim() !== '') {
+            const newDimension = {
+                diameter: parseInt(diameter.trim()),
+                height: parseInt(height.trim()),
+                price: parseInt(dimPrice.trim())
+            };
+            
+            setDimension([...dimension, newDimension]);
+
+            
+            // Reset input fields
+            setDiameter('');
+            setHeight('');
+            setDimPrice('');
+
+            console.log(dimension)
+
+        }
+    };
+
     const submitHandler = async (e) => {
         e.preventDefault();
 
@@ -67,6 +93,7 @@ const ProductEditScreen = () => {
             category,
             countInStock,
             description,
+            dimension,
         };
 
         const result = await updateProduct(updatedProduct);
@@ -78,6 +105,12 @@ const ProductEditScreen = () => {
             navigate('/admin/productlist')
         }
     }
+
+    const handleRemoveDimension = (index) => {
+        const newDimensions = [...dimension];
+        newDimensions.splice(index, 1);
+        setDimension(newDimensions);
+    };
 
     useEffect(() => {
         if (product) {
@@ -162,6 +195,54 @@ const ProductEditScreen = () => {
                     <label htmlFor="desc" className="block mb-2 text-sm text-gray-900">Description</label>
                     <input type="text" id="desc" value={description} onChange={(e) => setDescription(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5" />
                 </div>
+
+                
+                <div className="mb-5">
+                    <label className='block mb-2 text-sm text-gray-900' htmlFor="diameter">Diameter:</label>
+                    <input
+                        type="number"
+                        id="diameter"
+                        className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5'
+                        value={diameter}
+                        onChange={(e) => setDiameter(e.target.value)}
+                    />
+                </div>
+
+                <div className="mb-5">
+                    <label className='block mb-2 text-sm text-gray-900' htmlFor="height">Height:</label>
+                    <input
+                        type="number"
+                        id="height"
+                        className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5'
+                        value={height}
+                        onChange={(e) => setHeight(e.target.value)}
+                    />
+                </div>
+
+                <div className="mb-5">
+                    <label className='block mb-2 text-sm text-gray-900' htmlFor="price">Price:</label>
+                    <input
+                        type="number"
+                        id="price"
+                        className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5'
+                        value={dimPrice}
+                        onChange={(e) => setDimPrice(e.target.value)}
+                    />
+                </div>
+
+                <button type="button" className='mt-4 bg-primary text-white px-2 py-1' onClick={handleAddDimension}>Add Dimension</button>
+
+<div className="mb-5">
+    {/* <label>Dimensions:</label> */}
+    <ul>
+        {dimension.map((dim, index) => (
+            <li key={index} className='mt-4'>
+                Diameter: {dim.diameter}, Height: {dim.height}, Price: {dim.price}
+                <button type="button" className='ml-2 bg-black text-white px-2 py-1' onClick={() => handleRemoveDimension(index)}>Remove</button>
+            </li>
+        ))}
+    </ul>
+</div>  
 
                 <button type="submit" className="text-white bg-black focus:outline-none rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Update</button>
  

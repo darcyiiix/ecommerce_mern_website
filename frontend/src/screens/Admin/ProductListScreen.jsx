@@ -6,8 +6,9 @@ import Loader from '../../components/Loader'
 import Paginate from '../../components/Paginate'
 import { FaTrash, FaEdit } from 'react-icons/fa'
 import { toast } from 'react-toastify'
-import { useGetProductsQuery, useCreateProductMutation, useDeleteProductMutation } from '../../slices/productsApiSlice'
+import { useGetProductsQuery, useCreateProductMutation, useDeleteProductMutation, useCopyProductMutation } from '../../slices/productsApiSlice'
 import { useParams } from 'react-router-dom'
+
 
 const ProductListScreen = () => {
 
@@ -19,6 +20,12 @@ const ProductListScreen = () => {
 
     const [deleteProduct, {isLoading: loadingDelete} ] = useDeleteProductMutation();
 
+    const [copyProduct, { isLoading: loadingCopy }] = useCopyProductMutation((productId) => ({
+        url: '/api/products',
+        method: 'POST',
+        params: { copy: true, productId },
+    }));
+
     const createProductHandler = async () => {
         if(window.confirm('Are you sure you want to add a product')){
             try {
@@ -29,6 +36,21 @@ const ProductListScreen = () => {
             }
         }
     }
+
+    
+
+const copyProductHandler = async (productId) => {
+    if (window.confirm('Are you sure you want to copy this product?')) {
+        try {
+            await copyProduct(productId);
+            toast.success('Product copied successfully');
+            // Optionally, refetch products list if needed
+            // refetch();
+        } catch (err) {
+            toast.error(err?.data?.message || err.error);
+        }
+    }
+};
 
     const deleteHandler = async (id) => {
         if(window.confirm('Are you sure?')){
@@ -48,7 +70,7 @@ const ProductListScreen = () => {
         <div className="flex flex-col">
 
             <button type="button" onClick={createProductHandler} class="focus:outline-none text-white bg-primary rounded-lg text-sm px-5 py-2.5 me-2 mb-4 text-center self-end"> <FaEdit className="inline-block"/> Create Product</button>
-                
+           
         {loadingCreate && <Loader />}
         {loadingDelete && <Loader />}
 
@@ -93,7 +115,11 @@ const ProductListScreen = () => {
                             <td className="px-6 py-4">
                                 <a href={`/admin/product/${product._id}/edit`} className="font-medium text-blue-600 hover:underline"><FaEdit className="inline-block text-black size-4 mr-2" /></a>
                                 <a href="#" onClick={() => {deleteHandler(product._id)}} className="font-medium text-blue-600 hover:underline"><FaTrash className="inline-block bg-red-500 text-white py-1 size-5 rounded" /> </a>
+                                <button onClick={() => copyProductHandler(product._id)} disabled={loadingCopy}>
+            {loadingCopy ? 'Copying...' : 'Copy Product'}
+        </button>
                             </td>
+
                         </tr>
                          ))}
                     </tbody>

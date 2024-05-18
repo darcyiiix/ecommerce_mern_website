@@ -99,7 +99,7 @@ const Navbar = () => {
                 <div className="relative w-4/12">
                     <SearchBar />
                 </div>
-                <p className='flex items-center inline text-white'> <FaTruck className='mr-1' /> Free delivery for orders over $20</p>
+                <p className='flex items-center inline text-white'> <FaTruck className='mr-1' /> Free delivery for orders over $200</p>
             </div>
         </nav>
     );

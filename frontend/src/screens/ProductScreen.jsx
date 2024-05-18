@@ -40,8 +40,17 @@ const ProductDetail = () => {
             if (product.image && product.image.length > 0) {
                 setActiveImage(product.image[0]);
             }
+            if (product.dimension && product.dimension.length > 0) {
+                const firstDimension = product.dimension[0];
+                setSelectedDimension(firstDimension);
+                setPrice(firstDimension.price);
+            }
+            if (product.colors && product.colors.length > 0) {
+                setSelectedColor(product.colors[0]);
+            }
         }
     }, [product]);
+    
 
     const handleImageChange = (image) => {
         setActiveImage(image);
@@ -70,7 +79,7 @@ const ProductDetail = () => {
     const addToCartHandler = async (selectedDimension) => {
 
         console.log(selectedDimension)
-        dispatch(addToCart({...product, price, qty, selectedDimension}));
+        dispatch(addToCart({...product, price, qty, selectedDimension, selectedColor}));
         setShowAlert(true);
         setTimeout(() => setShowAlert(false), 3000);
     };
@@ -155,7 +164,7 @@ const ProductDetail = () => {
 
 
 <form>
-    {(product.dimension && product.dimension.length > 0 ) && 
+{(product.dimension && product.dimension.length > 0 ) && 
         <select 
             onChange={(e) => {
                 const selectedDim = JSON.parse(e.target.value);
@@ -163,9 +172,9 @@ const ProductDetail = () => {
                 setSelectedDimension(selectedDim);
             }} 
             id="dimension" 
-            className="bg-transparent border border-gray-300 text-gray-900 text-sm rounded-lg focus:outline-none cursor-pointer block w-9/12 py-3 px-1 shadow-lg mb-2"
+            className="bg-transparent border border-gray-300 text-gray-900 text-sm rounded-lg focus:outline-none cursor-pointer block w-9/12 py-3 px-1 shadow-lg mb-4"
+            value={JSON.stringify(selectedDimension)}
         >
-            <option value="N/A">Select a dimension</option>
             {product.dimension?.map((dim, index) => (
                 <option key={index} value={JSON.stringify(dim)}>
                     {`${dim.diameter}cm x ${dim.height} h price: $${dim.price}`}
@@ -173,6 +182,20 @@ const ProductDetail = () => {
             ))}
         </select>
     }
+
+
+            {(product.colors && product.colors.length > 0) && 
+                    <select 
+                        onChange={(e) => setSelectedColor(e.target.value)} 
+                        id="color" 
+                        className="bg-transparent border border-gray-300 text-gray-900 text-sm rounded-lg focus:outline-none cursor-pointer block w-9/12 py-3 px-1 shadow-lg mb-2"
+                        value={selectedColor}
+                    >
+                        {product.colors.map((color, index) => 
+                            <option key={index} value={color}>{color}</option>
+                        )}
+                    </select>
+                }
 </form>
 
                     <span className={`${product.countInStock > 0 ? 'text-primary' : 'text-red-400'} -mt-4`}>{ product.countInStock > 0 ? 'In stock' : 'Out of stock' }</span>
@@ -189,6 +212,8 @@ const ProductDetail = () => {
                                         </option> 
                                         ))}
                                         </select>}
+
+
 
                                     </form>
                     }

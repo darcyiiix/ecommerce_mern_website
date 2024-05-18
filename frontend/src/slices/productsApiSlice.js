@@ -33,6 +33,14 @@ export const productsApiSlice = apiSlice.injectEndpoints({
             }),
             invalidatesTags: ['Product'],
         }),
+        copyProduct: builder.mutation({
+            query: (productId) => ({
+                url: PRODUCTS_URL,
+                method: 'POST',
+                params: { copy: true, productId },
+            }),
+            invalidatesTags: ['Products'],
+        }),
         updateProduct: builder.mutation({
             query: (data) => ({
                 url: `${PRODUCTS_URL}/${data.productId}`,
@@ -81,3 +89,4 @@ export const { useUploadProductImageMutation } = productsApiSlice;
 export const { useDeleteProductMutation } = productsApiSlice;
 export const { useCreateReviewMutation } = productsApiSlice;
 export const { useGetTopProductsQuery } = productsApiSlice;
+export const { useCopyProductMutation } = productsApiSlice;

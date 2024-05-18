@@ -59,8 +59,8 @@ const Checkout = () => {
             <span className="font-semibold"><Link to={`/products/${item.product}`}>{item.name}</Link></span>
             <p className="text-lg font-bold">{item.qty} x {item.price} = {(item.qty * item.price).toFixed(2)}</p>
 
-            {item.selectedDimension && <p className="text-lg font-bold">{item.selectedDimension.diameter}cm x {item.selectedDimension.height}h</p> }
-            
+            {item.selectedDimension && <p className="text-lg font-semibold">{item.selectedDimension.diameter}cm x {item.selectedDimension.height}h</p> }
+            {item.selectedColor && <p className="text-lg font-semibold">{item.selectedColor}</p> }
             
           </div>
         </div>
