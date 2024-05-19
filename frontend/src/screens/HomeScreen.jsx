@@ -53,7 +53,7 @@ const HomeScreen = () => {
                 </div>   
 
                 <div className="text-center mt-10">
-                    <Link to="/categories/lampshades" className="border-b border-gray-500 py-1 inline-block">View all products</Link>
+                    <Link to="/products/allproducts" className="border-b border-gray-500 py-1 inline-block">View all products</Link>
                 </div>  
 
             </div>

@@ -5,8 +5,7 @@ import Loader from '../components/Loader';
 import Message from '../components/Message';
 import { useParams } from 'react-router-dom';
 
-const AllProductsScreen = () => {
-
+const ViewAllProductsScreen = () => {
     const { keyword } = useParams();
     const { data: productsData, isLoading, error } = useGetProductsQuery({ keyword });
     const [products, setProducts] = useState([]);
@@ -19,6 +18,12 @@ const AllProductsScreen = () => {
             setProducts(productsData.products);
         }
     }, [productsData]);
+
+    useEffect(() => {
+        if (products.length > 0) {
+            sortProducts(sortType);
+        }
+    }, [sortType, products]);
 
     const handleSortChange = (e) => {
         setSortType(e.target.value);
@@ -35,10 +40,6 @@ const AllProductsScreen = () => {
         }
         setProducts(sortedProducts);
     };
-
-    useEffect(() => {
-        sortProducts(sortType);
-    }, [sortType]);
 
     const showMoreItems = () => {
         const numItems = Math.min(visible + 4, products.length);
@@ -75,7 +76,7 @@ const AllProductsScreen = () => {
                         </div>
                     </div>
                     <div className='text-center'>
-                         <p className='my-4'>you've seen {visible} out of {products.length} products</p>
+                        <p className='my-4'>You've seen {visible} out of {products.length} products</p>
                         <button onClick={showMoreItems} disabled={btnDisabled} className={`text-white py-2 px-8 ${btnDisabled ? 'bg-gray-300' :'bg-primary'}`}>
                             Load more
                         </button>
@@ -86,4 +87,4 @@ const AllProductsScreen = () => {
     );
 };
 
-export default AllProductsScreen;
+export default ViewAllProductsScreen;

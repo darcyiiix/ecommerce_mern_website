@@ -28,6 +28,7 @@ import ProfileScreen from './screens/ProfileScreen.jsx';
 import FAQ from './components/pages/FAQ.jsx';
 import AboutUs from './components/pages/About-Us';
 import ContactUs from './components/pages/Contact-Us.jsx';
+import ViewAllProductsScreen from './screens/ViewAllProductsScreen.jsx';
 
 // Admin Screens
 
@@ -37,15 +38,16 @@ import ProductListScreen from './screens/Admin/ProductListScreen.jsx';
 import ProductEditScreen from './screens/Admin/ProductEditScreen.jsx';
 import UserListScreen from './screens/Admin/UserListScreen.jsx';
 import UserEditScreen from './screens/Admin/UserEditScreen.jsx';
-import AllProductsScreen from './screens/AllProductsScreen.jsx';
+import CategoryScreen from './screens/CategoryScreen.jsx';
 import WishlistScreen from './screens/WishlistScreen.jsx';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<App />}>
       <Route index={true} path="/" element={<HomeScreen />} />
-      <Route path="/search/:keyword" element={<AllProductsScreen />} />
-      <Route path="/categories/lampshades" element={<AllProductsScreen />} />
+      <Route path="/search/:keyword" element={<CategoryScreen />} />
+      <Route path="products/allproducts" element={<ViewAllProductsScreen />} />
+      <Route path="/products/:category?" element={<CategoryScreen />} />
       <Route path="/product/:id" element={<ProductDetail />} />
       <Route path="/cart" element={<CartScreen />}/>
       <Route path="/login" element={<LoginScreen />}/>
